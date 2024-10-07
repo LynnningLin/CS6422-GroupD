@@ -23,3 +23,30 @@ Integration with other smart devices: To take it a step further, it could integr
 
 ### FE Setup
 1. Navigate to the backend/ directory `cd frontend`
+
+## Common Git Commands
+1. Creating a New Branch
+To create a new branch for your feature development:
+`git checkout -b your-branch-name`
+
+2. Checking Branches
+To see all branches in your repository (both local and remote):
+`git branch -a`
+
+3. Switching Between Branches
+`git checkout your-branch-name`
+
+4. Fetching and Syncing with the Remote Repository
+To fetch the latest changes from the remote repository without merging:
+`git fetch origin`
+To fetch and merge the changes from the remote branch:
+`git pull origin branch-name`
+
+5. Staging and Committing Changes and Pushing Changes to the Remote
+Stage all your changes:
+`git add .`
+Commit the staged changes with a message:
+`git commit -m "Your commit message"`
+To merge changes from another branch (e.g., feature/branch-name) into your current branch:
+`git push origin feature/branch-name`
+
