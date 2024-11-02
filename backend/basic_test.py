@@ -4,7 +4,6 @@ from datetime import datetime
 import json
 from ANSI import Colours # Module used to style terminal using ANSI cdoes
 
-
 # :TODO Make separate channels for both Temp and Motion sensors
 radio_channel = 0
 
@@ -39,18 +38,18 @@ class Medium(object): # medium == wireless channel to communicate
         for store in self.communication_link_list:
             events.append(store.put(data))
 
-    def get_output_connections(self):
+    def get_output_connections(self, uuid=None):
         communication_link = simpy.Store(self.env, capacity=self.capacity) # create a new comm link
+        communication_link.uuid = uuid
         self.communication_link_list.append(communication_link) # comm added to list of comm links
         return communication_link # return the communication link
-
-
 
 # //// PARENT CLASS FOR SENSROS/ACTUATORS \\\\ #
 class Node(object): # Basic Node class that both HVACC Actuator AND Temp/Motion sensors will inherit from
     def __init__(self, env, medium, room_name, node_type, UUID):
-        self.env = env 
+        self.env = env
         self.data_in = medium.get_output_connections()   # Nodes get data in
+        # self.data_in = medium.get_output_connections(uuid = self.UUID) # First fix attempt, did not work, will probably remove
         self.data_out = medium  # Nodes send data out 
         self.room_name = room_name 
         self.channel = radio_channel
@@ -63,9 +62,11 @@ class Node(object): # Basic Node class that both HVACC Actuator AND Temp/Motion 
     def send_data(self, destination, string_data): # Method to create and send out data
         if debug_radio:  # If debug_radio is true
             print(self.UUID, self.env.now, ":", self.room_name, ":", self.node_type, "-->", destination)  # Print the realtime ,Node/Id_header, destination location and data payload
-            
-            message = (self.UUID, self.room_name, self.node_type, destination, str(string_data)) 
-            self.data_out.put(message) # actually sends the message using data_out
+        
+        message = (self.UUID, self.room_name, self.node_type, destination, str(string_data)) 
+        # self.data_out.put(message) # actually sends the message using data_out
+        self.data_out.transmit(message) # Changed so that the message is sent directly using "transmit"
+        # IMPORTANT: Moved the preceding lines out of "if debug_radio", which we still have set to False
 
     def receive_data(self, message):  # Method to receive and handle incoming data
         if message[3] == self.UUID: # Check if message was intended for this node using UUID, [3] is destination in the message tuple on line 66
@@ -75,8 +76,6 @@ class Node(object): # Basic Node class that both HVACC Actuator AND Temp/Motion 
         if debug_radio:
             print(self.env.now, ":", self.UUID, "X")
         return None
-
-
 
 # //// ACTUATORS \\\\ #
 class HVAC(Node):
@@ -95,9 +94,6 @@ class HVAC(Node):
             data_string = self.receive_data(message)
             if data_string:
                 print(self.env.now, ":", self.UUID, ' HVAC receiving', data_string)
-
-
-
 
 # //// SENSORS \\\\ #
 class TemperatureSensor(Node):
@@ -133,7 +129,6 @@ class TemperatureSensor(Node):
             data_string = self.receive_data(message)
             if data_string:
                 print(self.env.now,':', self.UUID ,' receiving ' , data_string)
-
 
 # class MotionSensor(Node):
     """
@@ -171,7 +166,8 @@ class TemperatureSensor(Node):
 # Start of main program
 seed(int(datetime.now().timestamp()))
 
-env = simpy.rt.RealtimeEnvironment(factor=0.01)
+# env = simpy.rt.RealtimeEnvironment(factor=0.01)
+env = simpy.rt.RealtimeEnvironment(factor=0.01, strict=False) # set "strict" to False, now simulation can be "too slow" without throwing errors
 medium = Medium(env)
 
 HVAC(env, medium, 'Actuator', 'A001')
@@ -181,4 +177,3 @@ TemperatureSensor(env, medium, 'Bedroom', 'T-Sensor', 'TS003')
 TemperatureSensor(env, medium, 'Kitchen', 'T-Sensor', 'TS004')
 
 env.run(until=6000)
-
