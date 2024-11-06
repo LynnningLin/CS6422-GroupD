@@ -12,11 +12,11 @@ def simulation(input_queue):
     # :TODO Make separate channels for both Temp and Motion sensors
     radio_channel = 0
 
-debug_radio = False
-debug_sensor = True
-"""
-test
-"""
+    debug_radio = False
+    debug_sensor = True
+    """
+    test
+    """
 
     class Medium(object): # medium == wireless channel to communicate
         def __init__(self, env, capacity=simpy.core.Infinity):
