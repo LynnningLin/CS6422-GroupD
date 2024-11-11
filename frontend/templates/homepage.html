@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<section id="occupancy">
+
+    {% if is_occupied %}
+    <img src="static/images/stay.png" />
+    {% else %}
+    <img src="static/images/away.png" />
+    {% endif %}
+
+</section>
+
+<section id="mode">
+
+    {% if is_default_mode %}
+    <p>Forever {{target_temperature}}°C</p>
+    {% else %}
+    <p>Economy Mode</p>
+    {% endif %}
+
+</section>
+
+<section id="panel">
+    <section id="indoor">
+        <p>Indoor</p>
+    </section>
+
+    <section id="current_section">
+        <p>{{current_temperature}}°C</p>
+    </section>
+
+    <section id="current_text">
+        <p>current</p>
+    </section>
+
+    <section id="target_section">
+        <p>{{target_temperature}}°C</p>
+
+        {% if HVAC_movement %}
+        <img src="static/images/temperature_up.png" />
+        {% else %}
+        <img src="static/images/temperature_down.png" />
+        {% endif %}
+
+        {% if is_HVAC_on %}
+        <img src="static/images/HVAC_on.png" />
+        {% else %}
+        <img src="static/images/HVAC_off.png" />
+        {% endif %}
+    </section>
+    
+    <section id="target_text">
+        <p>target</p>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,224 @@
+:root {
+    --border-color: #0056b3;
+    --button-color: #007BFF;
+}
+/* 全局应用 box-sizing: border-box */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%; /* 确保html和body的高度为100% */
+    margin: 0;    /* 去除默认的边距 */
+    padding: 0;   /* 去除默认的内边距 */
+    background-color: black;
+    font-size:1.3vw;
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+    
+}
+
+body {
+    width: 60vw; 
+    height: calc(60vw*9/16); 
+    margin: auto;  /* 居中body */
+    margin-top: 5%;
+}
+
+header {
+    height: 7%;
+    display: flex;
+    justify-content: space-evenly;
+    border: 2px solid var(--border-color);
+    background-color: var(--button-color);
+    color: white;
+    border-radius: 10px 10px 0 0;
+    
+}
+
+header p{
+    margin:auto;
+    font-size:1rem;
+}
+
+
+footer {
+    height: 10%;
+    display: flex;                    /* 使用 Flexbox 来横向排列 */
+                          /* 设置footer的高度 */
+    /* justify-content: space-between;     */
+    /* 元素之间均匀分布 */
+    align-items: center;               /* 垂直居中 */         /* 背景色 */
+}
+
+footer p {
+    height: 100%;
+    margin: 0;                         /* 去除p的默认外边距 */
+    padding:0;
+    flex-grow: 1;                       /* 让每个p占据相同的可用空间 */
+    display: flex;                     
+    justify-content: center;           /* 中间对齐链接 */
+    align-items: center; 
+}
+
+footer a {
+    /* display: block; */
+    width: 100%;                        /* 按钮宽度占满p元素的宽度 */
+    height: 100%;                        /* 高度为footer高度的50% */
+    background-color: var(--button-color);         /* 按钮背景颜色 */
+    color: white;                      /* 文字颜色 */
+    text-align: center;                /* 文字居中 */
+    text-decoration: none;             /* 去除链接的下划线 */
+    /* padding: 0 20px; */
+                       /* 给按钮左右内边距 */
+    font-size:1.5rem;                  /* 设置字体大小 */
+    border: 2px solid var(--border-color);
+    display: flex;                     /* 使用Flexbox进行布局 */
+    align-items: center;               /* 垂直居中按钮内部内容 */
+    justify-content: center;           /* 水平居中按钮内部内容 */
+
+}
+
+footer #homepage_tab{
+    border-radius: 0 0 0 10px;
+    border-right: none;
+}
+
+footer #settings_tab{
+    border-radius: 0 0 10px 0;
+    border-left: none;
+}
+
+
+footer a:hover {
+    background-color: var(--border-color);         /* 悬停时的按钮颜色 */
+}
+
+
+main {
+    height: 83%;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-template-rows: 50% 50%;
+    grid-template-areas: "top right"
+        "bottom right";
+    border-left: 2px solid var(--border-color);
+    border-right: 2px solid var(--border-color);
+    background-color: white;
+    color: black;
+}
+
+#occupancy {
+    grid-area: top;
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-left: none;
+    display:flex;
+    align-items: center; /* 垂直居中 */
+}
+
+
+#occupancy img {
+    width: 100%;
+    height: auto;
+    /* 保持图片宽高比 */
+    margin:auto;
+}
+
+#mode {
+    grid-area: bottom;
+    border-right: 2px solid var(--border-color);
+    font-size: 1.5rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mode p{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#panel {
+    grid-area: right;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 30% 40% 30%;
+    grid-template-areas: "top top"
+        "middle-left middle-right"
+        "bottom-left bottom-right";
+}
+
+#indoor {
+    grid-area: top;
+    /* border: 2px solid green; */
+    display:flex;
+    justify-content: center; 
+    align-items: flex-end;
+}
+
+#indoor p{
+    padding: 0;
+    margin:0 0 0 0;
+    text-align: center;
+    font-size: 3rem;
+}
+
+#current_section {
+    grid-area: middle-left;
+    /* border: 2px solid green; */
+}
+
+#current_section p{
+    font-size:6rem;
+    font-weight:bold;
+    margin-top: 3%;
+    margin-left: 23%;
+}
+
+#current_text {
+    grid-area: bottom-left;
+    margin-top: 0;
+    margin-left: 60%;
+    /* border: 2px solid green; */
+}
+
+#current_text p{
+    margin-top: -6%;
+}
+
+#target_section {
+    grid-area: middle-right;
+    /* border: 2px solid green; */
+}
+
+#target_section p{
+    font-size: 2rem;
+    margin-bottom: 0;
+    margin-left: 10%;
+
+}
+
+#target_section img {
+    width: auto;
+    height: 30%;
+    margin-left: 2%;
+}
+#target_section img:first-of-type {
+    margin-left: 9%;
+}
+
+#target_text {
+    grid-area: bottom-right;
+    margin-left: 15%;
+    /* border: 2px solid green; */
+}
+
+#target_text p{
+    margin-top: -6%;
+    /* border: 2px solid green; */
+}
+

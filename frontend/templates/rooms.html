@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Link to child-specific CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rooms.css') }}">
+{% endblock %}
+
+{% block main_content %}
+<section class="section" id="section-1">
+    Room 1:{{room1_temperature}}°C
+</section>
+<section class="section" id="section-2">
+    Room 2:{{room2_temperature}}°C
+</section>
+<section class="section" id="section-3">
+    Room 3:{{room3_temperature}}°C
+</section>
+<section class="section" id="section-4">
+    Room 4:{{room4_temperature}}°C
+</section>
+
+<!-- Centered Circle -->
+<div class="circle" id="fifth-section">Current:{{current_temperature}}°C</div>
+{% endblock %}

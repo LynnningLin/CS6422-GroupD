@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Homie</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <!-- <meta http-equiv="refresh" content="1"> -->
+    <!-- {% block extra_css %}{% endblock %} -->
+</head>
+
+<body>
+    <header>
+        <p>Homie - Your Smart Home Buddie</p>
+    </header>
+    <main>
+        {% block main_content %} 
+        <!-- main_content is a name, only _ no - in the name -->
+    
+        {% endblock %}
+    </main>
+    <footer>
+        <p><a id="homepage_tab"   href="{{url_for('homepage')}}">Overview</a></p>
+        <p><a href="{{url_for('rooms')}}">Rooms</a></p>
+        <p><a id="settings_tab" href="{{url_for('settings')}}">Settings</a></p>
+    </footer>
+</body>
