@@ -1,0 +1,45 @@
+main {
+    height: 83%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 50% 50%;
+    grid-template-areas: "a b"
+        "c d";
+    border-left: 2px solid var(--border-color);
+    border-right: 2px solid var(--border-color);
+    background-color: white;
+    color: black;
+    position: relative;              /* Make the grid-container a relative positioning context */
+    padding: 0;
+}
+
+
+/* Style for each section */
+.section {
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    /* height: 200px; */
+    border: 2px solid #333;
+}
+
+/* Centered circle */
+.circle {
+    position: absolute;  /* Position the circle absolutely within the grid */
+    top: 50%;            /* Center vertically */
+    left: 50%;           /* Center horizontally */
+    transform: translate(-50%, -50%);  /* Adjust for exact center */
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 0, 0, 0.7);  /* Red with some transparency */
+    border-radius: 50%;   /* Makes it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: white;
+    text-align: center;
+    border: 2px solid #333;
+}

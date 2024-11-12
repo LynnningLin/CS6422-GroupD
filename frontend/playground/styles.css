@@ -1,0 +1,47 @@
+/* Reset margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Grid container */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* 2 columns */
+    grid-template-rows: 1fr 1fr;     /* 2 rows */
+    gap: 20px;                       /* Space between grid items */
+    height: 100vh;                   /* Full viewport height */
+    position: relative;              /* Make the grid-container a relative positioning context */
+    padding: 0;
+}
+
+/* Style for each section */
+.section {
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    /* height: 200px; */
+    border: 2px solid #333;
+}
+
+/* Centered circle */
+.circle {
+    position: absolute;  /* Position the circle absolutely within the grid */
+    top: 50%;            /* Center vertically */
+    left: 50%;           /* Center horizontally */
+    transform: translate(-50%, -50%);  /* Adjust for exact center */
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 0, 0, 0.7);  /* Red with some transparency */
+    border-radius: 50%;   /* Makes it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: white;
+    text-align: center;
+    border: 2px solid #333;
+}
