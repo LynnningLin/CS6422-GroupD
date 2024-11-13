@@ -1,0 +1,1 @@
+    <!-- <meta http-equiv="refresh" content="1"> --> shouldn't apply for setting page

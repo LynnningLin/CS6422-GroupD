@@ -6,8 +6,10 @@ import random
 import threading
 import queue
 import time
+from forms import settingsForm
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "this-is-my-secret-key"
 
 # variables
 ## user input from front end
@@ -25,6 +27,14 @@ shared_data = {
     "current_temperature": 13,
     "is_HVAC_on": False,
     "HVAC_movement": 1
+}
+
+# system configuration for setting page
+system_config = {
+    'target_temperature': 25,
+    'occupation_detect': False,
+    'fire_alarm': False,
+    'mode': 'Default Mode'
 }
 
 # Function to update the variable 'a' every second
@@ -71,7 +81,16 @@ def rooms():
                            room4_temperature=shared_data["current_temperature"],)   
 
 
+
 @app.route("/settings",methods=["GET","POST"])
 def settings(): 
+    form = settingsForm()
+    if form.validate_on_submit():
+        system_config['target_temperature'] = form.target_temperature.data
+        system_config['occupation_detect'] = form.occupation_detect.data
+        system_config['fire_alarm'] = form.fire_alarm.data
+        system_config['mode'] = form.mode.data
+        
+        return redirect(url_for('settings')) 
 
-    return render_template("settings.html")   
+    return render_template("settings.html", form=form, system_config=system_config)   

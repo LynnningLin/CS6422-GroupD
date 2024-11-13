@@ -7,10 +7,53 @@ main {
     background-color: #ffffff;
 } 
 
-.setting_container{
+/* .setting_container{
+    width:100%;
+    margin: auto;
+} */
+
+form{
+    display:flex;
+    flex-direction: column; 
     width:80%;
     margin: 0 auto;
 }
+
+input[type="submit"] {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+    width: auto; /* Ensure the width is based on the content */
+    background-color: #007BFF; 
+    align-self: flex-end; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; /* Change cursor on hover */
+}
+
+input#target_temperature {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+    width:3em;
+    font-size: 0.9em;
+    border: 2px solid #ccc;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* background-color: #fff; */
+}
+
+/* input[type="checkbox"] {
+    width:1.5em;
+    border: 2px solid #ccc; 
+} */
+input[type="checkbox"] {
+
+    width: 1.5em;
+    height: 1.5em;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3; 
+}
+
 .setting_item {
     display: flex;
     flex-direction: column; 
@@ -37,5 +80,15 @@ main {
     font-size: 0.9em;
     color: #555;
     text-align: left;
-    margin: 10px 0;
+    margin: 0 0 20px 0;
 }
+
+select {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+    font-size: 0.9em !important; /* getting rid of inheritance from body */
+    padding: 0.2em 0.5em; 
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+    width: 10em; 
+}
+
