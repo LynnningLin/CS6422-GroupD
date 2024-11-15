@@ -2,11 +2,22 @@ import simpy.rt
 from random import seed, randint, choice
 from datetime import datetime
 import json
-from ANSI import Colours # Module used to style terminal using ANSI cdoes
+# from ANSI import Colours # Module used to style terminal using ANSI cdoes
+
+# try:
+#         from ANSI import Colours  # Import only for terminal output
+#         print(("Simulation in progress..."))
+# except ImportError:
+#         print("Simulation in progress... (no terminal styling)")
+
+# from ANSI import Colours
+
 
 import threading # For running simulation and taking user input simultaneously
 import time
 import queue # For sending info between threads without relying on global variables
+
+input_queue = queue.Queue()  # Queue for input/output data between threads
 
 def simulation(input_queue):
     # :TODO Make separate channels for both Temp and Motion sensors
@@ -89,7 +100,12 @@ def simulation(input_queue):
     class HVAC(Node):
         def __init__(self, env, medium, node_type, UUID):
             super().__init__(env, medium, None, node_type, UUID)
-            print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online {Colours.RESET}')
+
+            # print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online {Colours.RESET}')
+
+            print(f'{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online')
+
+            
 
             self.target_temperature = 22 # HVAC stores the target temperature for now
             self.occupied = True # Occupancy status of house
@@ -100,6 +116,8 @@ def simulation(input_queue):
                 "Bedroom": self.target_temperature,
                 "Kitchen": self.target_temperature
             }
+        def get_room_temp(self):
+            return self.room_temperatures
 
         def main_process(self): # Our temperature changing process; first check for new target input, then occupancy status, then begin adjusting temp. accordingly
             
@@ -121,10 +139,14 @@ def simulation(input_queue):
                 if self.occupied: # We then check occupancy status. If someone is home, we update the temperature as per usual
                     for room, temperature in self.room_temperatures.items():
                         if temperature < self.target_temperature:
-                            print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.BLUE}{temperature}{Colours.RESET}' ", increasing" )
+                            # print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.BLUE}{temperature}{Colours.RESET}' ", increasing" )
+                            print(self.env.now, ":", f'{self.UUID}' " Current " f'{room}' " temp is " f'{temperature}' ", increasing" )
                             self.room_temperatures[room] = temperature+1
+                            # print(f'{room} {temperature} Data display test ') This was just some minor debugging
+
                         elif temperature > self.target_temperature:
-                            print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.RED}{temperature}{Colours.RESET}' ", decreasing" )
+                            # print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.RED}{temperature}{Colours.RESET}' ", decreasing" )
+                            print(self.env.now, ":", f'{self.UUID}' " Current " f'{room}' " temp is " f'{temperature}' ", decreasing" )
                             self.room_temperatures[room] = temperature-1
 
         def receive_process(self):
@@ -132,7 +154,8 @@ def simulation(input_queue):
                 message = yield self.data_in.get()
                 data_string = self.receive_data(message)
                 if data_string:
-                    print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.CYAN}{self.UUID}{Colours.RESET}{Colours.MAGENTA} HVAC receiving {data_string}{Colours.RESET}')
+                    # print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.CYAN}{self.UUID}{Colours.RESET}{Colours.MAGENTA} HVAC receiving {data_string}{Colours.RESET}')
+                    print(f'{self.env.now} : {self.UUID} HVAC receiving {data_string}')
                 
                 data_reading = json.loads(data_string)
                 
@@ -147,12 +170,14 @@ def simulation(input_queue):
     class TemperatureSensor(Node):
         def __init__(self, env, medium, room_name, node_type, UUID): # Initialises new sensor object that inherits from Node
             super().__init__(env, medium, room_name, node_type, UUID) # Accessing Parent class(Node) method and properties
-            print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Temp-Sensor Online {Colours.RESET}')
+            # print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Temp-Sensor Online {Colours.RESET}')
+            print(f'{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Temp-Sensor Online ')
 
         def temperature(self):
             temp = randint(27, 35)
             if debug_sensor:
-                print(self.env.now, ":", f'{Colours.YELLOW}{self.UUID}{Colours.RESET}', "Reading temps of:", temp,"°C")
+                # print(self.env.now, ":", f'{Colours.YELLOW}{self.UUID}{Colours.RESET}', "Reading temps of:", temp,"°C")
+                print(self.env.now, ":", f'{self.UUID}', "Reading temps of:", temp,"°C")
             return temp
 
         def main_process(self):
@@ -170,7 +195,8 @@ def simulation(input_queue):
                 json_message['Destination'] = 'A001' 
                 json_message['DATA'] = self.temperature()
                 string_data = json.dumps(json_message)
-                print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.YELLOW}{self.UUID}{Colours.RESET}{Colours.MAGENTA} sending {string_data}{Colours.RESET}')
+                # print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.YELLOW}{self.UUID}{Colours.RESET}{Colours.MAGENTA} sending {string_data}{Colours.RESET}')
+                print(f'{self.env.now} : {self.UUID} sending {string_data}')
                 self.send_data(json_message['Destination'], string_data)  
         
         def receive_process(self):
@@ -195,7 +221,8 @@ def simulation(input_queue):
 
         def __init__(self, env, medium, room_name, node_type, UUID): # Initialises new sensor object that inherits from Node
             super().__init__(env, medium, room_name, node_type, UUID) # Accessing Parent class(Node) method and properties
-            print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Motion-Sensor Online {Colours.RESET}')
+            # print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Motion-Sensor Online {Colours.RESET}')
+            print(f'{self.env.now} : {self.UUID} : {self.node_type} : {self.room_name} :  New Motion-Sensor Online ')
 
         def occupancy(self): # Occupancy Check whether T/F
             isOccupied = choice([True, False]) # Stored Possible Values
@@ -222,11 +249,14 @@ def simulation(input_queue):
 
                 # Print status change
                     if occupancy_status: # If occupancy status is True
-                        print(self.env.now, ":", f'{Colours.RED}{self.UUID}{Colours.RESET}', "Status changed: Someone is Home") # Change Status
+                        # print(self.env.now, ":", f'{Colours.RED}{self.UUID}{Colours.RESET}', "Status changed: Someone is Home") # Change Status
+                        print(self.env.now, ":", f'{self.UUID}', "Status changed: Someone is Home") # Change Status
                     else: 
-                        print(self.env.now, ":", f'{Colours.RED}{self.UUID}{Colours.RESET}', "Status changed: Nobody is Home")
+                        # print(self.env.now, ":", f'{Colours.RED}{self.UUID}{Colours.RESET}', "Status changed: Nobody is Home")
+                        print(self.env.now, ":", f'{self.UUID}', "Status changed: Nobody is Home")
 
-                    print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.RED}{self.UUID}{Colours.RESET}{Colours.MAGENTA} sending {string_data}{Colours.RESET}')
+                    # print(f'{Colours.MAGENTA}{self.env.now} : {Colours.RESET}{Colours.RED}{self.UUID}{Colours.RESET}{Colours.MAGENTA} sending {string_data}{Colours.RESET}')
+                    print(f'{self.env.now} : {self.UUID} sending {string_data}')
                     self.send_data(json_message['Destination'], string_data) # Will only send data if there is a change in Occupancy Status
 
                     yield self.env.timeout(randint(1000, 3000)) 
@@ -256,7 +286,25 @@ def simulation(input_queue):
 
     MotionSensor(env, medium, 'Home', 'M-Sensor', 'MS001')
 
-    env.run(until=6000)
+
+    # My attempt to create a global variable, it's a mess and will probably be scrapped but I'll leave it here in case any of you guys find it useful
+    hvac_ref = HVAC(env, medium, 'Actuator', 'A001')
+    global hvac_instance  # or use a different storage mechanism
+    hvac_instance = hvac_ref
+
+    
+    while True:
+        for room, temp in hvac_ref.room_temperatures.items():
+            print(f"Current room temperatures: {room} {temp}")
+            input_queue.put(temp)
+            print(f"Room temperatures added to queue. {temp}")
+        time.sleep(1)  # Pauses to simulate real-time changes
+        break
+    
+    env.run()
+
+    return hvac_ref
+
 
 def user_input(input_queue): # Completely separate function for handling user input
     while True:

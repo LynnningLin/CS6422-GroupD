@@ -6,8 +6,51 @@ import random
 import threading
 import queue
 import time
+from backend.basic_test import simulation
 
-app = Flask(__name__)
+# from backend.ANSI import Colours
+
+app = Flask(__name__) 
+
+
+# Simulation Stuff
+input_queue = queue.Queue() # Initialising input queue 
+hvac_instance = None
+
+
+# This actually lets flask run and the simulation to run on a different thread
+def simulation_thead():
+    simulation_thread = threading.Thread(target=simulation, args=(input_queue,))
+    simulation_thread.daemon = True
+    simulation_thread.start()
+
+simulation_thead()
+
+"""
+This was my attempt to retrieve the data from the dictionary through a HVAC instance whilst starting the simulation but it didnt work
+"""
+# def start_simulation(input_queue):
+
+#     global hvac_instance
+#     hvac_instance = simulation()
+
+    
+#     simulation_thread = threading.Thread(target=simulation, args=(input_queue,))
+#     simulation_thread.daemon = True
+#     simulation_thread.start()
+
+
+#     hvac_instance = simulation()
+#     if 'hvac_instance' in globals():  # Check if it exists
+#         room_temperatures = hvac_instance.get_room_temperatures()  # Access via method or directly
+#         print("Room temperatures from HVAC:", room_temperatures)
+#     else:
+#         print("HVAC instance is not yet available.")
+
+# start_simulation()
+
+
+
 
 # variables
 ## user input from front end
@@ -42,6 +85,7 @@ def index():
 
 @app.route("/homepage",methods=["GET","POST"])
 def homepage(): 
+
     shared_data["room1_temperature"] = random.randint(10, 40)
     shared_data["room2_temperature"] = random.randint(10, 40)
     shared_data["room3_temperature"] = random.randint(10, 40)
@@ -57,6 +101,7 @@ def homepage():
 
 @app.route("/rooms",methods=["GET","POST"])
 def rooms(): 
+    
     shared_data["room1_temperature"] = random.randint(10, 40)
     shared_data["room2_temperature"] = random.randint(10, 40)
     shared_data["room3_temperature"] = random.randint(10, 40)
