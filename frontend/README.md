@@ -1,5 +1,5 @@
 **Todo:**
-1. <!-- <meta http-equiv="refresh" content="1"> --> shouldn't apply for setting page
+1. `<meta http-equiv="refresh" content="1">` shouldn't apply for setting page
 2. `/homepage` pictures change according to detection
     - Occupation: User input in settings can enable or stop the change
     - HVAC movement
