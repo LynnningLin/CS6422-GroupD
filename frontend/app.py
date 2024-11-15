@@ -1,5 +1,5 @@
 # python3.10 -m flask run
-from flask import Flask,render_template,url_for,redirect
+from flask import Flask,render_template,url_for,redirect,request
 # from forms import SettingsForm
 import random
 # from datetime import datetime,date
@@ -52,12 +52,40 @@ def index():
 
 @app.route("/homepage",methods=["GET","POST"])
 def homepage(): 
+    # initialize target temperature
+    target_temperature = 25
+    system_config['mode'] = 'default'
+    if request.method == 'POST':
+        # Handle the form submission from /settings
+        mode = request.form.get('mode')  
+        target_temperature = request.form.get('target_temperature')
+        occupation_detect = request.form.get('occupation_detect') == 'on'  
+        fire_alarm = request.form.get('fire_alarm') == 'on' 
+        
+        # I dont know why print doesn't work in flask :(
+        print(f"Mode updated to: {mode}")
+        print(f"Target Temperature: {target_temperature}")
+        print(f"Occupation Detect: {occupation_detect}")
+        print(f"Fire Alarm: {fire_alarm}")
+       
+        
+        
+        system_config['mode'] = mode
+        system_config['target_temperature'] = target_temperature
+        system_config['occupation_detect'] = occupation_detect
+        system_config['fire_alarm'] = fire_alarm
+        
+        print(f"Mode updated to: {system_config['mode']}") 
+        
     shared_data["room1_temperature"] = random.randint(10, 40)
     shared_data["room2_temperature"] = random.randint(10, 40)
     shared_data["room3_temperature"] = random.randint(10, 40)
     shared_data["room4_temperature"] = random.randint(10, 40)
-    shared_data["current_temperature"] = int((shared_data["room1_temperature"]+shared_data["room2_temperature"]+shared_data["room3_temperature"]+shared_data["room4_temperature"])/4)
+    
+    shared_data["current_temperature"] = int((shared_data["room1_temperature"]+shared_data["room2_temperature"]+shared_data["room3_temperature"]+shared_data["room4_temperature"])/4)    
+    
     return render_template("homepage.html",
+                           system_config=system_config,
                            is_default_mode=is_default_mode,target_temperature=target_temperature,is_fire_alarm=is_fire_alarm,
                             is_occupied=shared_data["is_occupied"],
                             current_temperature=shared_data["current_temperature"],
@@ -84,13 +112,20 @@ def rooms():
 
 @app.route("/settings",methods=["GET","POST"])
 def settings(): 
+    print("Inside settings route")
+
     form = settingsForm()
     if form.validate_on_submit():
+        print("Form submitted") 
         system_config['target_temperature'] = form.target_temperature.data
         system_config['occupation_detect'] = form.occupation_detect.data
         system_config['fire_alarm'] = form.fire_alarm.data
         system_config['mode'] = form.mode.data
         
-        return redirect(url_for('settings')) 
+        return redirect(url_for('homepage')) 
+
 
     return render_template("settings.html", form=form, system_config=system_config)   
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -70,12 +70,6 @@ input[type="submit"]:hover {
     font-weight: bold;
 }
 
-/* .setting_item input[type="checkbox"],
-.setting_item input[type="date"] {
-    
-    margin: 0 10px;
-} */
-
 .setting_item .explanation {
     font-size: 0.9em;
     color: #555;
