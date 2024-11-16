@@ -80,7 +80,7 @@ def index():
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
 
-    with open("data.json", "r") as file:
+    with open("sensor_data.json", "r") as file:
         data = json.load(file)
 
     shared_data.update({
@@ -108,7 +108,7 @@ def homepage():
 @app.route("/rooms", methods=["GET", "POST"])
 def rooms():
 
-    with open("data.json", "r") as file:
+    with open("sensor_data.json", "r") as file:
         data = json.load(file)
 
     shared_data.update({

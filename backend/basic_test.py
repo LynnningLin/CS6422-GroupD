@@ -181,7 +181,7 @@ def simulation(input_queue):
                     "is_increasing": self.is_increasing
                 }
 
-                with open("data.json", "w") as file:
+                with open("sensor_data.json", "w") as file:
                     json.dump(backend_data, file)
 
     # //// SENSORS \\\\ #
