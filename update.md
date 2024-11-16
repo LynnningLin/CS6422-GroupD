@@ -26,6 +26,10 @@
 
 * Also i couldnt import ANSI and the basic_test has many dependencies on ANSI so i did a try/except just so the ansi package would be isolated from the flask app as flask doesnt actually need ansi to run
 * UPDATE --> I actually disiabled ANSI all together just for the sake of testing flask with the simulation
+<hr>
 
-    
-
+## UPDATE FOR FRONTEND/BACKEND INTERGRATION
+* I had to comment out a lot of the environment and the declared instances code at the end as well as the user input and the threading in basic_test.py.
+* I had to take the simulation out of the function as well so it was easier for me to access the classes in the flask app
+* I re-declared all of them in the flask app instead and got access to the hvac instance and confidgured the temps shown in the frontend to where they now actually show real data. 
+* Little tid-bit but i changed the size of the temerature text in the frontend because they were overlapping onto the icons 
