@@ -107,6 +107,7 @@ def simulation(input_queue):
 
             self.target_temperature = 22 # HVAC stores the target temperature for now
             self.occupied = True # Occupancy status of house
+            self.is_increasing = True # Check whether temp inc/dec
 
             self.room_temperatures = { # This is a dictionary where we store the current temp. for each room, makes it easier/cleaner to iterate through and update them
                 "Living Room": self.target_temperature,
@@ -147,11 +148,13 @@ def simulation(input_queue):
                             # print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.BLUE}{temperature}{Colours.RESET}' ", increasing" )
                             print(self.env.now, ":", f'{self.UUID}' " Current " f'{room}' " temp is " f'{temperature}' ", increasing" )
                             self.room_temperatures[room] = temperature+1
+                            self.is_increasing = True
                             # print(f'{room} {temperature} Data display test ') This was just some minor debugging
 
                         elif temperature > self.target_temperature:
                             # print(self.env.now, ":", f'{Colours.CYAN}{self.UUID}{Colours.RESET}' " Current " f'{Colours.GREEN}{room}{Colours.RESET}' " temp is " f'{Colours.RED}{temperature}{Colours.RESET}' ", decreasing" )
                             print(self.env.now, ":", f'{self.UUID}' " Current " f'{room}' " temp is " f'{temperature}' ", decreasing" )
+                            self.is_increasing = False
                             self.room_temperatures[room] = temperature-1
 
         def receive_process(self):
@@ -174,10 +177,11 @@ def simulation(input_queue):
                 # SENDING DATE TO FRONTEND
                 backend_data = {
                     "room_temperatures": self.room_temperatures,
-                    "occupancy_status": self.occupied
+                    "occupancy_status": self.occupied,
+                    "is_increasing": self.is_increasing
                 }
 
-                with open("sensor_data.json", "w") as file:
+                with open("data.json", "w") as file:
                     json.dump(backend_data, file)
 
     # //// SENSORS \\\\ #
