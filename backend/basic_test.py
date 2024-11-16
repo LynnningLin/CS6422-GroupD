@@ -105,8 +105,6 @@ def simulation(input_queue):
 
             print(f'{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online')
 
-            
-
             self.target_temperature = 22 # HVAC stores the target temperature for now
             self.occupied = True # Occupancy status of house
 
@@ -165,6 +163,15 @@ def simulation(input_queue):
                     self.room_temperatures[room_reading] = data_reading.get('DATA')
                 else: # Otherwise the reading is for our occupancy status, which we also update
                     self.occupied = data_reading.get('IsOccupied')
+                
+                # SENDING DATE TO FRONTEND
+                backend_data = {
+                    "room_temperatures": self.room_temperatures,
+                    "occupancy_status": self.occupied 
+                }
+
+                with open("data.json", "w") as file:
+                    json.dump(backend_data, file)
 
     # //// SENSORS \\\\ #
     class TemperatureSensor(Node):

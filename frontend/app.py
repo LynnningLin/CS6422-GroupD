@@ -1,5 +1,5 @@
 # python3.10 -m flask run
-from flask import Flask,render_template,url_for,redirect
+from flask import Flask,render_template,url_for,redirect,jsonify
 # from forms import SettingsForm
 import random
 # from datetime import datetime,date
@@ -8,10 +8,11 @@ import queue
 import time
 from backend.basic_test import simulation
 
+import json
+
 # from backend.ANSI import Colours
 
 app = Flask(__name__) 
-
 
 # Simulation Stuff
 input_queue = queue.Queue() # Initialising input queue 
@@ -84,13 +85,18 @@ def index():
     return redirect(url_for("homepage"))
 
 @app.route("/homepage",methods=["GET","POST"])
-def homepage(): 
+def homepage():    
 
-    shared_data["room1_temperature"] = random.randint(10, 40)
-    shared_data["room2_temperature"] = random.randint(10, 40)
-    shared_data["room3_temperature"] = random.randint(10, 40)
-    shared_data["room4_temperature"] = random.randint(10, 40)
+    with open("data.json", "r") as file:
+        data = json.load(file)
+
+    shared_data["room1_temperature"] = data["room_temperatures"]["Living Room"]
+    shared_data["room2_temperature"] = data["room_temperatures"]["Bathroom"]
+    shared_data["room3_temperature"] = data["room_temperatures"]["Bedroom"]
+    shared_data["room4_temperature"] = data["room_temperatures"]["Kitchen"]
     shared_data["current_temperature"] = int((shared_data["room1_temperature"]+shared_data["room2_temperature"]+shared_data["room3_temperature"]+shared_data["room4_temperature"])/4)
+    shared_data["is_occupied"] = data["occupancy_status"]
+
     return render_template("homepage.html",
                            is_default_mode=is_default_mode,target_temperature=target_temperature,is_fire_alarm=is_fire_alarm,
                             is_occupied=shared_data["is_occupied"],
@@ -98,23 +104,24 @@ def homepage():
                             is_HVAC_on=shared_data["is_HVAC_on"],
                             HVAC_movement=shared_data["HVAC_movement"])    
 
-
 @app.route("/rooms",methods=["GET","POST"])
 def rooms(): 
-    
-    shared_data["room1_temperature"] = random.randint(10, 40)
-    shared_data["room2_temperature"] = random.randint(10, 40)
-    shared_data["room3_temperature"] = random.randint(10, 40)
-    shared_data["room4_temperature"] = random.randint(10, 40)
+
+    with open("data.json", "r") as file:
+        data = json.load(file)
+
+    shared_data["room1_temperature"] = data["room_temperatures"]["Living Room"]
+    shared_data["room2_temperature"] = data["room_temperatures"]["Bathroom"]
+    shared_data["room3_temperature"] = data["room_temperatures"]["Bedroom"]
+    shared_data["room4_temperature"] = data["room_temperatures"]["Kitchen"]
     shared_data["current_temperature"] = int((shared_data["room1_temperature"]+shared_data["room2_temperature"]+shared_data["room3_temperature"]+shared_data["room4_temperature"])/4)
 
     return render_template("rooms.html",
                            current_temperature=shared_data["current_temperature"],
-                           room1_temperature=shared_data["current_temperature"],
-                           room3_temperature=shared_data["current_temperature"],
-                           room2_temperature=shared_data["current_temperature"],
-                           room4_temperature=shared_data["current_temperature"],)   
-
+                           room1_temperature=shared_data["room1_temperature"],
+                           room2_temperature=shared_data["room2_temperature"],
+                           room3_temperature=shared_data["room3_temperature"],
+                           room4_temperature=shared_data["room4_temperature"],)   
 
 @app.route("/settings",methods=["GET","POST"])
 def settings(): 
