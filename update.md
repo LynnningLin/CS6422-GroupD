@@ -26,6 +26,3 @@
 
 * Also i couldnt import ANSI and the basic_test has many dependencies on ANSI so i did a try/except just so the ansi package would be isolated from the flask app as flask doesnt actually need ansi to run
 * UPDATE --> I actually disiabled ANSI all together just for the sake of testing flask with the simulation
-
-    
-

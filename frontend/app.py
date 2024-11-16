@@ -1,5 +1,5 @@
 # python3.10 -m flask run
-from flask import Flask,render_template,url_for,redirect,jsonify
+from flask import Flask,render_template,url_for,redirect,jsonify,request
 # from forms import SettingsForm
 import random
 # from datetime import datetime,date
@@ -59,6 +59,17 @@ is_default_mode=False
 target_temperature=20
 is_fire_alarm=True
 
+# Initialize JSON file and send target temperature data once, before anything else (so that we never receive an empty JSON file)
+
+def initialize_target_data():
+    target_data = {
+        "target_temperature": target_temperature
+    }
+    with open("target_data.json", "w") as file:
+        json.dump(target_data, file)
+
+initialize_target_data()
+
 ## from backend
 shared_data = {
     "is_occupied": True,
@@ -87,7 +98,7 @@ def index():
 @app.route("/homepage",methods=["GET","POST"])
 def homepage():    
 
-    with open("data.json", "r") as file:
+    with open("sensor_data.json", "r") as file:
         data = json.load(file)
 
     shared_data["room1_temperature"] = data["room_temperatures"]["Living Room"]
@@ -107,7 +118,7 @@ def homepage():
 @app.route("/rooms",methods=["GET","POST"])
 def rooms(): 
 
-    with open("data.json", "r") as file:
+    with open("sensor_data.json", "r") as file:
         data = json.load(file)
 
     shared_data["room1_temperature"] = data["room_temperatures"]["Living Room"]
@@ -122,6 +133,26 @@ def rooms():
                            room2_temperature=shared_data["room2_temperature"],
                            room3_temperature=shared_data["room3_temperature"],
                            room4_temperature=shared_data["room4_temperature"],)   
+
+# ROUTE FOR HANDLING TARGET TEMPERATURE CHANGES
+
+@app.route('/set_target_temperature', methods=['POST'])
+def set_target_temperature():
+    # Changes to the target temperature (via the buttons) are directed here. We update the JSON file and our target_temperature global
+    #   variable, with the latter being used (solely?) to update the target temperature in the UI
+    new_temperature = request.form.get("target_temperature", type=int) # We pull the new target from the user input form and store it
+    global target_temperature
+    target_temperature = new_temperature
+
+    target_data = {
+        "target_temperature": new_temperature
+    }
+
+    with open("target_data.json", "w") as file:
+        json.dump(target_data, file)
+
+    # Redirect back to the homepage to be safe
+    return redirect(url_for('homepage'))
 
 @app.route("/settings",methods=["GET","POST"])
 def settings(): 
