@@ -11,9 +11,9 @@ import json
 
 
 # Disbaling Flask Logs
-import logging
-log = logging.getLogger('werkzeug') # This is the default flask logger
-log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
+# import logging
+# log = logging.getLogger('werkzeug') # This is the default flask logger
+# log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
 
 # from backend.ANSI import Colours
 
@@ -153,5 +153,4 @@ def set_target_temperature():
 
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
-
     return render_template("settings.html")
