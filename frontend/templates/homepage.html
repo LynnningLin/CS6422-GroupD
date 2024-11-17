@@ -27,7 +27,7 @@
     </section>
 
     <section id="current_section">
-        <p>{{current_temperature}}°C</p>
+        <p id="test">{{current_temperature}}°C</p>
     </section>
 
     <section id="current_text">
@@ -36,7 +36,7 @@
 
     <section id="target_section">
         <p>{{target_temperature}}°C</p>
-
+    
         {% if HVAC_movement %}
         <img src="static/images/temperature_up.png" />
         {% else %}
