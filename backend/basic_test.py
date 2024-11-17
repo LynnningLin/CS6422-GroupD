@@ -104,7 +104,6 @@ def simulation(input_queue):
             # print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online {Colours.RESET}')
 
             print(f'{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online')
-            # print(f'{Colours.GREEN}{self.env.now} : {self.UUID} : {self.node_type} : HVAC Online{Colours.RESET}')
 
             self.target_temperature = 22 # HVAC stores the target temperature for now
             self.occupied = True # Occupancy status of house
@@ -130,11 +129,18 @@ def simulation(input_queue):
             while True:
                 yield self.env.timeout(100)
 
-                try: # First we check the input queue to see whether target temperature has been updated
-                    self.target_temperature = input_queue.get_nowait()
-                    print(f"Thermostat received new target: {self.target_temperature}")
-                except queue.Empty:
-                    pass
+                # OLD: This is the old terminal, thread & queue version
+                # try:
+                #     self.target_temperature = input_queue.get_nowait()
+                #     print(f"Thermostat received new target: {self.target_temperature}")
+                # except queue.Empty:
+                #     pass
+
+                # NEW: We now check for target temperature input by opening and loading the separate target_data.json file,
+                #       which is only updated when the user adjusts the target in the UI
+                with open("target_data.json", "r") as file:
+                    target_data = json.load(file)
+                    self.target_temperature = target_data["target_temperature"]
             
                 if self.occupied: # We then check occupancy status. If someone is home, we update the temperature as per usual
                     for room, temperature in self.room_temperatures.items():
@@ -175,7 +181,7 @@ def simulation(input_queue):
                     "is_increasing": self.is_increasing
                 }
 
-                with open("data.json", "w") as file:
+                with open("sensor_data.json", "w") as file:
                     json.dump(backend_data, file)
 
     # //// SENSORS \\\\ #
