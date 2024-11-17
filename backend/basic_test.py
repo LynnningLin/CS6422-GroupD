@@ -304,8 +304,7 @@ def simulation(input_queue):
 
     MotionSensor(env, medium, 'Home', 'M-Sensor', 'MS001')
 
-
-    # My attempt to create a global variable, it's a mess and will probably be scrapped but I'll leave it here in case any of you guys find it useful
+    # # My attempt to create a global variable, it's a mess and will probably be scrapped but I'll leave it here in case any of you guys find it useful
     hvac_ref = HVAC(env, medium, 'Actuator', 'A001')
     global hvac_instance  # or use a different storage mechanism
     hvac_instance = hvac_ref

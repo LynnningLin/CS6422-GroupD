@@ -11,7 +11,7 @@ import json
 # from backend.ANSI import Colours
 
 
-# Disbaling Flask Logs
+# Disabling Flask Logs
 # import logging
 # log = logging.getLogger('werkzeug') # This is the default flask logger
 # log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
@@ -25,7 +25,6 @@ def simulation_thead(): # This actually lets flask run and the simulation to run
         target=simulation, args=(input_queue,))
     simulation_thread.daemon = True
     simulation_thread.start()
-    print("URL TO THE FLASK PROJECT(Sorry Eoghan :/ )) --> http://127.0.0.1:5000/")
 simulation_thead()
 
 # variables
@@ -35,7 +34,6 @@ target_temperature = 20
 is_fire_alarm = True
 
 # Initialize JSON file and send target temperature data once, before anything else (so that we never receive an empty JSON file)
-
 def initialize_target_data():
     target_data = {
         "target_temperature": target_temperature
