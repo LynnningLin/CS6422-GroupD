@@ -8,6 +8,7 @@ import queue
 import time
 from backend.basic_test import simulation
 import json
+# from backend.ANSI import Colours
 
 
 # Disbaling Flask Logs
@@ -15,17 +16,11 @@ import json
 # log = logging.getLogger('werkzeug') # This is the default flask logger
 # log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
 
-# from backend.ANSI import Colours
-
 app = Flask(__name__)
 
 # Simulation Stuff
 input_queue = queue.Queue()  # Initialising input queue
-hvac_instance = None
-
-
-# This actually lets flask run and the simulation to run on a different thread
-def simulation_thead():
+def simulation_thead(): # This actually lets flask run and the simulation to run on a different thread
     simulation_thread = threading.Thread(
         target=simulation, args=(input_queue,))
     simulation_thread.daemon = True
