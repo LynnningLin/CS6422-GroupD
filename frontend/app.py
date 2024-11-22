@@ -7,6 +7,7 @@ import threading
 import queue
 import time
 from forms import settingsForm
+import json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
@@ -37,6 +38,10 @@ system_config = {
     'mode': 'Default Mode'
 }
 
+# global target_temperature
+# target_temperature = new_temperature
+        
+
 # Function to update the variable 'a' every second
 # def update_variable():
 #     while True:
@@ -62,6 +67,7 @@ def homepage():
         occupation_detect = request.form.get('occupation_detect') == 'on'  
         fire_alarm = request.form.get('fire_alarm') == 'on' 
         
+        
         # I dont know why print doesn't work in flask :(
         print(f"Mode updated to: {mode}")
         print(f"Target Temperature: {target_temperature}")
@@ -74,7 +80,7 @@ def homepage():
         system_config['target_temperature'] = target_temperature
         system_config['occupation_detect'] = occupation_detect
         system_config['fire_alarm'] = fire_alarm
-        
+                
         print(f"Mode updated to: {system_config['mode']}") 
         
     shared_data["room1_temperature"] = random.randint(10, 40)
@@ -121,6 +127,13 @@ def settings():
         system_config['occupation_detect'] = form.occupation_detect.data
         system_config['fire_alarm'] = form.fire_alarm.data
         system_config['mode'] = form.mode.data
+        
+        # Put data into json file
+        target_data = {
+            "target_temperature": form.target_temperature.data
+        }
+        with open("target_data.json", "w") as file:
+            json.dump(target_data, file)
         
         return redirect(url_for('homepage')) 
 
