@@ -13,7 +13,7 @@
 
 <section id="mode">
 
-    {% if is_default_mode %}
+    {% if system_config['mode'] == 'default' %}
     <p>Forever {{target_temperature}}°C</p>
     {% else %}
     <p>Economy Mode</p>
@@ -35,7 +35,7 @@
     </section>
 
     <section id="target_section">
-        <p>{{target_temperature}}°C</p>
+        <p>{{ system_config['target_temperature'] }}°C</p>
 
         {% if HVAC_movement %}
         <img src="static/images/temperature_up.png" />
