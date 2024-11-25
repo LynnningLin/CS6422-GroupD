@@ -99,7 +99,11 @@ def homepage():
         mode = request.form.get('mode')  
         subm_target_temperature = request.form.get('target_temperature')
         occupation_detect = request.form.get('occupation_detect') == 'on'  
-        fire_alarm = request.form.get('fire_alarm') == 'on' 
+        # fire_alarm = request.form.get('fire_alarm') == 'on' 
+        fire_alarm = request.form.get('fire_alarm')
+
+        # for comparisons later
+        target_temperature = subm_target_temperature
         
         # I dont know why print doesn't work in flask :(
         print(f"Mode updated to: {mode}")
@@ -114,19 +118,37 @@ def homepage():
                 
         print(f"Mode updated to: {system_config['mode']}")
 
-        target_data = {
-            "target_temperature": int(subm_target_temperature) # Needs to be manually set to integer
-        }
+        # target_data = {
+        #     "target_temperature": int(subm_target_temperature) # Needs to be manually set to integer
+        # }
 
-        with open("target_data.json", "w") as file:
-            json.dump(target_data, file)
+        if subm_target_temperature:
+            target_data = {
+                "target_temperature": int(subm_target_temperature), # Needs to be manually set to integer
+                "fire_alarm": fire_alarm
+            }
+
+            with open("target_data.json", "w") as file:
+                json.dump(target_data, file)
+
+    # HVAC up/down symbol code
+    current_temperature = int((data["room_temperatures"]["Living Room"] +data["room_temperatures"]["Bathroom"] +data["room_temperatures"]["Bedroom"] +data["room_temperatures"]["Kitchen"]) / 4)
+    
+    HVAC_temp = False
+    if target_temperature:
+        if int(current_temperature) < int(target_temperature):
+            HVAC_temp = True
+        else:
+            HVAC_temp = False
 
     shared_data.update({
     "room1_temperature": data["room_temperatures"]["Living Room"],
     "room2_temperature": data["room_temperatures"]["Bathroom"],
     "room3_temperature": data["room_temperatures"]["Bedroom"],
     "room4_temperature": data["room_temperatures"]["Kitchen"],
-    "current_temperature": int((data["room_temperatures"]["Living Room"] +data["room_temperatures"]["Bathroom"] +data["room_temperatures"]["Bedroom"] +data["room_temperatures"]["Kitchen"]) / 4),
+    # "current_temperature": int((data["room_temperatures"]["Living Room"] +data["room_temperatures"]["Bathroom"] +data["room_temperatures"]["Bedroom"] +data["room_temperatures"]["Kitchen"]) / 4),
+    "current_temperature": current_temperature,
+    "HVAC_movement": HVAC_temp,
     "is_occupied": data["occupancy_status"]
     })
 

@@ -10,6 +10,10 @@ function fetch_data(){
             console.log("Received Data: ", data);  // Debug log, Check console in browser to see
 
             $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
+           
+            if(data.current_temperature > 50 && data.fire_alarm =="y"){
+                alert("Fire!!!");
+            };
 
             if (data.is_occupied){ // Shows whether the Stay or Away is diaplayed based on the JSON data 
                 $("#occupancy img").attr('src', 'static/images/stay.png');
