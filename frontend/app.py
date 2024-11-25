@@ -8,15 +8,17 @@ import queue
 import time
 from backend.basic_test import simulation
 import json
+from .forms import settingsForm
 # from backend.ANSI import Colours
 
 
 # Disabling Flask Logs
-# import logging
-# log = logging.getLogger('werkzeug') # This is the default flask logger
-# log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
+import logging
+log = logging.getLogger('werkzeug') # This is the default flask logger
+log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "mmm-ice-cream-so-good"
 
 # Simulation Stuff
 input_queue = queue.Queue()  # Initialising input queue
@@ -32,6 +34,14 @@ simulation_thead()
 is_default_mode = False
 target_temperature = 20
 is_fire_alarm = True
+
+# system configuration for setting page
+system_config = {
+    'target_temperature': 25,
+    'occupation_detect': False,
+    'fire_alarm': False,
+    'mode': 'Default Mode'
+}
 
 # Initialize JSON file and send target temperature data once, before anything else (so that we never receive an empty JSON file)
 def initialize_target_data():
@@ -84,12 +94,14 @@ def homepage():
     "room4_temperature": data["room_temperatures"]["Kitchen"],
     "current_temperature": int((data["room_temperatures"]["Living Room"] +data["room_temperatures"]["Bathroom"] +data["room_temperatures"]["Bedroom"] +data["room_temperatures"]["Kitchen"]) / 4),
     "is_occupied": data["occupancy_status"]
-})
+    })
 
     # If the request is an AJAX call, return JSON
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        # response_data = {**shared_data, **target_data}
+        # print("Response sent to AJAX", response_data)
         return jsonify(shared_data)
-
+    
     return render_template("homepage.html",
                            is_default_mode=is_default_mode, target_temperature=target_temperature, is_fire_alarm=is_fire_alarm,
                            is_occupied=shared_data["is_occupied"],
@@ -138,13 +150,33 @@ def set_target_temperature():
     target_data = {
         "target_temperature": new_temperature
     }
-
     with open("target_data.json", "w") as file:
         json.dump(target_data, file)
 
     # Redirect back to the homepage to be safe
     return redirect(url_for('homepage'))
 
-@app.route("/settings", methods=["GET", "POST"])
-def settings():
-    return render_template("settings.html")
+@app.route("/settings",methods=["GET","POST"])
+def settings(): 
+    print("Inside settings route")
+
+    form = settingsForm()
+    if form.validate_on_submit():
+        print("Form submitted") 
+
+        # system_config.update({
+        #     'target_temperature': form.target_temperature.data,
+        #     'occupation_detect': form.occupation_detect.data,
+        #     'fire_alarm': form.fire_alarm.data,
+        #     'mode': form.mode.data
+        # })
+        
+        system_config['target_temperature'] = form.target_temperature.data
+        system_config['occupation_detect'] = form.occupation_detect.data
+        system_config['fire_alarm'] = form.fire_alarm.data
+        system_config['mode'] = form.mode.data
+        print(form.fire_alarm.data)
+        return redirect(url_for('homepage')) 
+
+
+    return render_template("settings.html", form=form, system_config=system_config)   

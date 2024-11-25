@@ -7,9 +7,17 @@ function fetch_data(){
             "X-Requested-With": "XMLHttpRequest"},
         
             success: function(data){
-            console.log("Received Data: ", data);  // Debug log, Check console in browser to see
+            console.log("Received Data: ", data);  // Sensors data debug log, Check console in browser to see
+            // console.log('Receied Target Data', data.target_temperature) // Target Data debug log
+
+            // $('#test2').text(data.target_temperature + "°C");
 
             $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
+            
+            if (data.current_temperature > 50) {
+                alert(" Temperature is at Dangerous Levels, Please Vacate the Building||| "); // This is for fire alarm, gives alert for user with a pop-up, annoying but get's your attention
+            }
+        
 
             if (data.is_occupied){ // Shows whether the Stay or Away is diaplayed based on the JSON data 
                 $("#occupancy img").attr('src', 'static/images/stay.png');
@@ -32,6 +40,7 @@ function fetch_data(){
         type: "GET",
         headers: {
             "X-Requested-With": "XMLHttpRequest"}, // Mark the request as an AJAX one
+            
         success: function(data){
             console.log("Received Data: ", data);  // Debug log
             $('#section-1').text("Living Room: " + data.room1_temperature + "°C");
@@ -39,12 +48,17 @@ function fetch_data(){
             $('#section-3').text("Bedroom: " + data.room3_temperature + "°C");
             $('#section-4').text("Kitchen:" + data.room4_temperature + "°C");
             $('#fifth-section').text("Current: " + data.current_temperature + "°C");
+
+
+            if (data.current_temperature > 50) {
+                alert(" Temperature is at Dangerous Levels, Please Vacate the Building "); // This is for fire alarm, gives alert for user with a pop-up, annoying but get's your attention
+            }
         },
         error: function(error){
             console.warn("Can't Fetch /rooms Data!", error);
         } 
     })
 }
-setInterval(fetch_data, 250); // If you want to change how fast AJAX is updating the browser then swtich it here, it doesn't affect the simpy env speed. 
+setInterval(fetch_data, 450); // If you want to change how fast AJAX is updating the browser then swtich it here, it doesn't affect the simpy env speed. 
 
 

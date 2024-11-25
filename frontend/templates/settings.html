@@ -6,39 +6,79 @@
 {% endblock %}
 
 {% block main_content %}
-    
+
+<form method="POST" action="{{ url_for('homepage') }}" novalidate>
 <div class="setting_container">
     <div class="setting_item">
         <div class="input_row">
-            <label for="holiday_start_date">Holiday Start Date</label>
-            <input type="date" id="holiday_start_date">
+            {{ form.hidden_tag() }}
+            {{ form.target_temperature.label }}
+            {{ form.target_temperature() }}
+            {% for error in form.target_temperature.errors %}
+                {{ error }}
+            {% endfor %}
         </div>
-        <p class="explanation">Select the start date of your holiday period.</p>
+        <p class="explanation">Enter your target temperature</p>
     </div>
+
+
+    Buttons to adjust the temperature
+    <form id="target_form" method="POST" action="/set_target_temperature">
+        <button type="button" onclick="adjustTemperature(-1)">-</button>
+        <input type="number" id="target_temperature_input" name="target_temperature" value="{{ target_temperature }}">
+        <button type="button" onclick="adjustTemperature(1)">+</button>
+        <button type="submit">Set</button>
+    </form>
+
+     
+    <script>
+        function adjustTemperature(change) {
+            const inputField = document.getElementById("target_temperature_input");
+            let currentTemperature = parseInt(inputField.value, 10);
+            currentTemperature += change;
+            inputField.value = currentTemperature;
+            document.getElementById("display_target_temperature").innerText = `${currentTemperature}°C`;
+        }
+    </script>
 
     <div class="setting_item">
         <div class="input_row">
-            <label for="holiday_end_date">Holiday End Date</label>
-            <input type="date" id="holiday_end_date">
-        </div>
-        <p class="explanation">Select the end date of your holiday period.</p>
-    </div>
-
-    <div class="setting_item">
-        <div class="input_row">
-            <label for="occupancy_detection">Occupancy Detection</label>
-            <input type="checkbox" id="occupancy_detection">
+            {{ form.hidden_tag() }}
+            {{ form.occupation_detect.label }}
+            {{ form.occupation_detect() }}
+            {% for error in form.occupation_detect.errors %}
+                {{ error }}
+            {% endfor %}
         </div>
         <p class="explanation">Enable or disable occupancy detection.</p>
     </div>
-
+    
     <div class="setting_item">
         <div class="input_row">
-            <label for="fire_alarm">Fire Alarm if Temp > 50°C</label>
-            <input type="checkbox" id="fire_alarm">
+            {{ form.hidden_tag() }}
+            {{ form.fire_alarm.label }}
+            {{ form.fire_alarm() }}
+            {% for error in form.fire_alarm.errors %}
+                {{ error }}
+            {% endfor %}
         </div>
         <p class="explanation">Enable fire alarm notification if temperature exceeds 50°C.</p>
     </div>
-</div>
 
+    <div class="setting_item">
+        <div class="input_row">
+            {{ form.hidden_tag() }}
+            {{ form.mode.label }}
+            {{ form.mode() }}
+            {% for error in form.mode.errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+        <p class="explanation">Choose between 2 modes.</p>
+    </div>
+</div>
+    
+
+    {{ form.submit() }}
+</form>
 {% endblock %}
