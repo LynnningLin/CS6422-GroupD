@@ -8,16 +8,15 @@ function fetch_data(){
         
             success: function(data){
             console.log("Received Data: ", data);  // Sensors data debug log, Check console in browser to see
-            // console.log('Receied Target Data', data.target_temperature) // Target Data debug log
+            console.log("Fire Alarm Status:", data.fire_alarm);
 
             // $('#test2').text(data.target_temperature + "°C");
 
             $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
-            
-            if (data.current_temperature > 50) {
-                alert(" Temperature is at Dangerous Levels, Please Vacate the Building||| "); // This is for fire alarm, gives alert for user with a pop-up, annoying but get's your attention
-            }
-        
+           
+            if(data.current_temperature >= 50 && data.fire_alarm == "y"){
+                alert("ATTENTION\nTemperature At Dangerous Levels\nPlease Vacata Immediately\nSystem Will Stop");
+            };
 
             if (data.is_occupied){ // Shows whether the Stay or Away is diaplayed based on the JSON data 
                 $("#occupancy img").attr('src', 'static/images/stay.png');
@@ -47,12 +46,8 @@ function fetch_data(){
             $('#section-2').text("Bathroom: " + data.room2_temperature + "°C");
             $('#section-3').text("Bedroom: " + data.room3_temperature + "°C");
             $('#section-4').text("Kitchen:" + data.room4_temperature + "°C");
-            $('#fifth-section').text("Current: " + data.current_temperature + "°C");
+            $('#fifth-section').text("Current: " + data.current_temperature + "°C")
 
-
-            if (data.current_temperature > 50) {
-                alert(" Temperature is at Dangerous Levels, Please Vacate the Building "); // This is for fire alarm, gives alert for user with a pop-up, annoying but get's your attention
-            }
         },
         error: function(error){
             console.warn("Can't Fetch /rooms Data!", error);

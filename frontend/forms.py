@@ -3,7 +3,7 @@ from wtforms import ValidationError, IntegerField, SubmitField, BooleanField, Se
 from wtforms.validators import InputRequired
 
 class settingsForm(FlaskForm):
-    target_temperature = IntegerField("Target Temperature (°C)",validators=[InputRequired()])
+    target_temperature = IntegerField("Target Temperature (°C)",validators=[InputRequired()], default=25)
     occupation_detect = BooleanField("Occupation Detection")
     fire_alarm = BooleanField("Fire Alarm if Temp > 50 °C")
     mode = SelectField("Select your mode", choices=[('default', 'Default Mode'), ('economy', 'Economy Mode')])

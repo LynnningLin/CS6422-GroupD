@@ -37,7 +37,7 @@
         <div class="input_row">
             {{ form.hidden_tag() }}
             {{ form.fire_alarm.label }}
-            {{ form.fire_alarm() }}
+            {{ form.fire_alarm(id="fire_alarm_button") }}
             {% for error in form.fire_alarm.errors %}
                 {{ error }}
             {% endfor %}
@@ -58,13 +58,26 @@
     </div>
 </div>
     
-<<<<<<< HEAD
-=======
 
-    {{ form.submit() }}
+    {{ form.submit(id="submit_button") }}
 </form>
->>>>>>> backend_eoghan
 
-    {{ form.submit() }}
 </form>
+
+<script type="text/javascript">
+    // Get the fire alarm button element
+    let fireAlarmButton = document.getElementById("fire_alarm_button");
+    let SubmitButton = document.getElementById("submit_button");
+
+    fireAlarmButton.addEventListener("click", function() {
+        if (fireAlarmButton.checked) {
+            alert("Fire Alarm as been turned ON.\n Press Submit to Save Changes");
+        }
+    });
+    SubmitButton.addEventListener("click", function(){
+        if (!fireAlarmButton.checked){
+            alert("Fire Alarm as been turned OFF.")
+        }
+    })
+</script>
 {% endblock %}
