@@ -103,7 +103,7 @@ def index():
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
     # initialize target temperature
-    target_temperature = 25
+    target_temperature = system_config["target_temperature"]
     system_config['mode'] = 'default'
     # occupation_detect = False
     
