@@ -20,27 +20,7 @@
         </div>
         <p class="explanation">Enter your target temperature</p>
     </div>
-
-
-    Buttons to adjust the temperature
-    <form id="target_form" method="POST" action="/set_target_temperature">
-        <button type="button" onclick="adjustTemperature(-1)">-</button>
-        <input type="number" id="target_temperature_input" name="target_temperature" value="{{ target_temperature }}">
-        <button type="button" onclick="adjustTemperature(1)">+</button>
-        <button type="submit">Set</button>
-    </form>
-
-     
-    <script>
-        function adjustTemperature(change) {
-            const inputField = document.getElementById("target_temperature_input");
-            let currentTemperature = parseInt(inputField.value, 10);
-            currentTemperature += change;
-            inputField.value = currentTemperature;
-            document.getElementById("display_target_temperature").innerText = `${currentTemperature}°C`;
-        }
-    </script>
-
+    
     <div class="setting_item">
         <div class="input_row">
             {{ form.hidden_tag() }}
@@ -78,6 +58,12 @@
     </div>
 </div>
     
+<<<<<<< HEAD
+=======
+
+    {{ form.submit() }}
+</form>
+>>>>>>> backend_eoghan
 
     {{ form.submit() }}
 </form>

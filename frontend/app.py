@@ -7,6 +7,7 @@ import threading
 import queue
 import time
 from backend.basic_test import simulation
+from frontend.forms import settingsForm
 import json
 from .forms import settingsForm
 # from backend.ANSI import Colours
@@ -18,7 +19,7 @@ log = logging.getLogger('werkzeug') # This is the default flask logger
 log.setLevel(logging.ERROR) # Filtered out any redundant logs like GETs, only logs when it's an error
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "mmm-ice-cream-so-good"
+app.config["SECRET_KEY"] = "this-is-my-secret-key"
 
 # Simulation Stuff
 input_queue = queue.Queue()  # Initialising input queue
@@ -75,6 +76,12 @@ shared_data = {
 
 # routes
 
+system_config = {
+    'target_temperature': 25,
+    'occupation_detect': False,
+    'fire_alarm': False,
+    'mode': 'Default Mode'
+}
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -83,9 +90,39 @@ def index():
 
 @app.route("/homepage", methods=["GET", "POST"])
 def homepage():
-
+    # initialize target temperature
+    target_temperature = 25
+    system_config['mode'] = 'default'
+    
     with open("sensor_data.json", "r") as file:
         data = json.load(file)
+
+    if request.method == 'POST':
+        # Handle the form submission from /settings
+        mode = request.form.get('mode')  
+        subm_target_temperature = request.form.get('target_temperature')
+        occupation_detect = request.form.get('occupation_detect') == 'on'  
+        fire_alarm = request.form.get('fire_alarm') == 'on' 
+        
+        # I dont know why print doesn't work in flask :(
+        print(f"Mode updated to: {mode}")
+        print(f"Target Temperature: {subm_target_temperature}")
+        print(f"Occupation Detect: {occupation_detect}")
+        print(f"Fire Alarm: {fire_alarm}")
+        
+        system_config['mode'] = mode
+        system_config['target_temperature'] = subm_target_temperature
+        system_config['occupation_detect'] = occupation_detect
+        system_config['fire_alarm'] = fire_alarm
+                
+        print(f"Mode updated to: {system_config['mode']}")
+
+        target_data = {
+            "target_temperature": int(subm_target_temperature) # Needs to be manually set to integer
+        }
+
+        with open("target_data.json", "w") as file:
+            json.dump(target_data, file)
 
     shared_data.update({
     "room1_temperature": data["room_temperatures"]["Living Room"],
@@ -103,12 +140,14 @@ def homepage():
         return jsonify(shared_data)
     
     return render_template("homepage.html",
-                           is_default_mode=is_default_mode, target_temperature=target_temperature, is_fire_alarm=is_fire_alarm,
-                           is_occupied=shared_data["is_occupied"],
-                           current_temperature=shared_data["current_temperature"],
-                           is_HVAC_on=shared_data["is_HVAC_on"],
-                           HVAC_movement=shared_data["HVAC_movement"],
-                           shared_data=shared_data)
+                            system_config=system_config,
+                            is_default_mode=is_default_mode,target_temperature=target_temperature,is_fire_alarm=is_fire_alarm,
+                            is_occupied=shared_data["is_occupied"],
+                            current_temperature=shared_data["current_temperature"],
+                            is_HVAC_on=shared_data["is_HVAC_on"],
+                            HVAC_movement=shared_data["HVAC_movement"],
+                            shared_data = shared_data)
+
 
 
 @app.route("/rooms", methods=["GET", "POST"])
@@ -137,24 +176,25 @@ def rooms():
                            room3_temperature=shared_data["room3_temperature"],
                            room4_temperature=shared_data["room4_temperature"],)   
 
-# ROUTE FOR HANDLING TARGET TEMPERATURE CHANGES
+# ROUTE FOR HANDLING TARGET TEMPERATURE CHANGES (OLD)
 
-@app.route('/set_target_temperature', methods=['POST'])
-def set_target_temperature():
-    # Changes to the target temperature (via the buttons) are directed here. We update the JSON file and our target_temperature global
-    #   variable, with the latter being used (solely?) to update the target temperature in the UI
-    new_temperature = request.form.get("target_temperature", type=int) # We pull the new target from the user input form and store it
-    global target_temperature
-    target_temperature = new_temperature
+# @app.route('/set_target_temperature', methods=['POST'])
+# def set_target_temperature():
+#     # Changes to the target temperature (via the buttons) are directed here. We update the JSON file and our target_temperature global
+#     #   variable, with the latter being used (solely?) to update the target temperature in the UI
+#     new_temperature = request.form.get("target_temperature", type=int) # We pull the new target from the user input form and store it
+#     global target_temperature
+#     target_temperature = new_temperature
 
-    target_data = {
-        "target_temperature": new_temperature
-    }
-    with open("target_data.json", "w") as file:
-        json.dump(target_data, file)
+#     target_data = {
+#         "target_temperature": new_temperature
+#     }
 
-    # Redirect back to the homepage to be safe
-    return redirect(url_for('homepage'))
+#     with open("target_data.json", "w") as file:
+#         json.dump(target_data, file)
+
+#     # Redirect back to the homepage to be safe
+#     return redirect(url_for('homepage'))
 
 @app.route("/settings",methods=["GET","POST"])
 def settings(): 
@@ -163,20 +203,17 @@ def settings():
     form = settingsForm()
     if form.validate_on_submit():
         print("Form submitted") 
-
-        # system_config.update({
-        #     'target_temperature': form.target_temperature.data,
-        #     'occupation_detect': form.occupation_detect.data,
-        #     'fire_alarm': form.fire_alarm.data,
-        #     'mode': form.mode.data
-        # })
-        
         system_config['target_temperature'] = form.target_temperature.data
         system_config['occupation_detect'] = form.occupation_detect.data
         system_config['fire_alarm'] = form.fire_alarm.data
         system_config['mode'] = form.mode.data
-        print(form.fire_alarm.data)
-        return redirect(url_for('homepage')) 
 
+        # Following code might be useless because we do the same thing in @app.route("/homepage"), will probably delete later
+        target_data = {
+            "target_temperature": form.target_temperature.data
+        }
 
-    return render_template("settings.html", form=form, system_config=system_config)   
+        with open("target_data.json", "w") as file:
+            json.dump(target_data, file)
+
+    return render_template("settings.html", form=form, system_config=system_config)  

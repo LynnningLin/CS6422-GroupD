@@ -13,7 +13,7 @@
 
 <section id="mode">
 
-    {% if is_default_mode %}
+    {% if system_config['mode'] == 'default' %}
     <p>Forever {{target_temperature}}°C</p>
     {% else %}
     <p>Economy Mode</p>
@@ -27,7 +27,7 @@
     </section>
 
     <section id="current_section">
-        <p id="test">{{current_temperature}}°C</p>
+        <p>{{current_temperature}}°C</p>
     </section>
 
     <section id="current_text">
@@ -35,15 +35,7 @@
     </section>
 
     <section id="target_section">
-        <p id="test2">{{target_temperature}}°C</p>
-
-        <!-- Buttons to adjust the temperature -->
-        <form id="target_form" method="POST" action="/set_target_temperature">
-            <button type="button" onclick="adjustTemperature(-1)">-</button>
-            <input type="number" id="target_temperature_input" name="target_temperature" value="{{ target_temperature }}" readonly>
-            <button type="button" onclick="adjustTemperature(1)">+</button>
-            <button type="submit">Set</button>
-        </form>
+        <p>{{ system_config['target_temperature'] }}°C</p>
 
         {% if HVAC_movement %}
         <img src="static/images/temperature_up.png" />
@@ -57,17 +49,6 @@
         <img src="static/images/HVAC_off.png" />
         {% endif %}
     </section>
-    
-    <!-- Very simple script for adjusting target temperature in increments of 1 --->
-    <script>
-        function adjustTemperature(change) {
-            const inputField = document.getElementById("target_temperature_input");
-            let currentTemperature = parseInt(inputField.value, 10);
-            currentTemperature += change;
-            inputField.value = currentTemperature;
-            document.getElementById("display_target_temperature").innerText = `${currentTemperature}°C`;
-        }
-    </script>
     
     <section id="target_text">
         <p>target</p>
