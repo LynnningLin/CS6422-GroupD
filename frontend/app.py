@@ -105,6 +105,7 @@ def homepage():
     # initialize target temperature
     target_temperature = 25
     system_config['mode'] = 'default'
+    # occupation_detect = False
     
     with open("sensor_data.json", "r") as file:
         data = json.load(file)
@@ -113,8 +114,9 @@ def homepage():
         # Handle the form submission from /settings
         mode = request.form.get('mode')  
         subm_target_temperature = request.form.get('target_temperature')
-        occupation_detect = request.form.get('occupation_detect') == 'on'  
+        # occupation_detect = request.form.get('occupation_detect') == 'on'  
         # fire_alarm = request.form.get('fire_alarm') == 'on' 
+        occupation_detect = request.form.get('occupation_detect') 
         fire_alarm = request.form.get('fire_alarm')
 
         # for comparisons later
@@ -156,6 +158,12 @@ def homepage():
         else:
             HVAC_temp = False
 
+    # Occupation setting & AC symbol
+    if system_config['occupation_detect'] == "y":
+        occupation_detect_off = True
+    else:  
+        occupation_detect_off = data["occupancy_status"]
+
     shared_data.update({
     "room1_temperature": data["room_temperatures"]["Living Room"],
     "room2_temperature": data["room_temperatures"]["Bathroom"],
@@ -164,7 +172,9 @@ def homepage():
     # "current_temperature": int((data["room_temperatures"]["Living Room"] +data["room_temperatures"]["Bathroom"] +data["room_temperatures"]["Bedroom"] +data["room_temperatures"]["Kitchen"]) / 4),
     "current_temperature": current_temperature,
     "HVAC_movement": HVAC_temp,
-    "is_occupied": data["occupancy_status"]
+    #"is_occupied": data["occupancy_status"]
+    "is_occupied": occupation_detect_off,
+    "is_HVAC_on": occupation_detect_off
     })
 
     # If the request is an AJAX call, return JSON

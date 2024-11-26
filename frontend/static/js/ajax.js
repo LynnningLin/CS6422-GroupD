@@ -12,10 +12,13 @@ function fetch_data(){
 
             // $('#test2').text(data.target_temperature + "°C");
 
-            $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
+            // $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
            
+            $('#current_section').text(data.current_temperature + "°C");
+
+
             if(data.current_temperature >= 50 && data.fire_alarm == "y"){
-                alert("ATTENTION\nTemperature At Dangerous Levels\nPlease Vacata Immediately\nSystem Will Stop");
+                alert("ATTENTION\nTemperature At Dangerous Levels\nPlease Vacate Immediately\nSystem Will Stop");
             };
 
             if (data.is_occupied){ // Shows whether the Stay or Away is diaplayed based on the JSON data 
@@ -23,11 +26,17 @@ function fetch_data(){
             } else{
                 $("#occupancy img").attr('src', 'static/images/away.png');
             }
-            if (data.is_increasing){
-                $("#target_section img").attr('src', 'static/images/temperature_up.png'); // Still working on this
+            // if (data.is_increasing){
+            if (data.HVAC_movement){
+                $("#target_section img:first-of-type").attr('src', 'static/images/temperature_up.png'); // Still working on this
             } else {
-                // $("#target_section img").attr('src', 'static/images/temperature_down.png');
+                $("#target_section img:first-of-type").attr('src', 'static/images/temperature_down.png');
             } // Had some trouble with checking whether the temp is increasing or not, but shouldn't be hard to iron out later on
+            if (data.is_HVAC_on){
+                $("#target_section img:last-of-type").attr('src', 'static/images/HVAC_on.png');
+            } else {
+                $("#target_section img:last-of-type").attr('src', 'static/images/HVAC_off.png');
+            }
         },
         error: function(error){
             console.warn("Can't Fetch /homepage Data!", error); // Error Handling
