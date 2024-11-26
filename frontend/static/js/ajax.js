@@ -9,8 +9,9 @@ function fetch_data(){
             success: function(data){
             console.log("Received Data: ", data);  // Debug log, Check console in browser to see
 
-            $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
-           
+            // $('#test').text(data.current_temperature + "°C"); // #test is the id i added for the current temp in /homepage  <p id="test">{{current_temperature}}°C</p>, this refreshes the number on the browser
+            $('#current_section').text(data.current_temperature + "°C");
+
             if(data.current_temperature > 50 && data.fire_alarm =="y"){
                 alert("Fire!!!");
             };
